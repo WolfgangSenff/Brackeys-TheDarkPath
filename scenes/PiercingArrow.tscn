@@ -1,0 +1,40 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://scenes/LightArrow.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/projectiles/ChalkProjectiles-4.png" type="Texture" id=2]
+[ext_resource path="res://scenes/PiercingArrow.gd" type="Script" id=3]
+[ext_resource path="res://scenes/FireArrowMask.tscn" type="PackedScene" id=4]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 14.1987, 6.12493 )
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 14.9574
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 11.2476, 6.06925 )
+
+[node name="PiercingArrow" instance=ExtResource( 1 )]
+script = ExtResource( 3 )
+Damage = 20
+ReturnSpeed = 100.0
+
+[node name="CollisionShape2D" parent="." index="0"]
+position = Vector2( 0.423946, 0.0863419 )
+shape = SubResource( 1 )
+
+[node name="CollisionShape2D" parent="PlayerHit" index="0"]
+shape = SubResource( 2 )
+
+[node name="CollisionShape2D" parent="EnemyHit" index="0"]
+position = Vector2( 3.04096, 0.142023 )
+shape = SubResource( 3 )
+
+[node name="Sprite" parent="." index="3"]
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 2 )
+
+[node name="MaskController" parent="." index="5"]
+MaskTexture = ExtResource( 4 )
+
+[connection signal="body_entered" from="." to="." method="_on_Arrow_body_entered" flags=7]

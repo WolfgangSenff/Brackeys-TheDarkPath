@@ -1,0 +1,39 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://scenes/enemies/EnemyWeapon.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/enemies/Nightmare-weapon.png" type="Texture" id=2]
+[ext_resource path="res://scenes/enemies/NightmareShot.gd" type="Script" id=3]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 9.24001
+
+[sub_resource type="AtlasTexture" id=2]
+atlas = ExtResource( 2 )
+region = Rect2( 0, 0, 64, 64 )
+
+[sub_resource type="AtlasTexture" id=3]
+atlas = ExtResource( 2 )
+region = Rect2( 64, 0, 64, 64 )
+
+[sub_resource type="SpriteFrames" id=4]
+animations = [ {
+"frames": [ SubResource( 2 ), SubResource( 3 ) ],
+"loop": true,
+"name": "default",
+"speed": 8.0
+} ]
+
+[node name="NightmareShot" instance=ExtResource( 1 )]
+script = ExtResource( 3 )
+
+[node name="CollisionShape2D" parent="." index="0"]
+shape = SubResource( 1 )
+
+[node name="Sprite" parent="." index="1"]
+position = Vector2( 1.19055, -0.198425 )
+frames = SubResource( 4 )
+playing = true
+
+[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="." index="2"]
+
+[connection signal="screen_exited" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited" flags=6]

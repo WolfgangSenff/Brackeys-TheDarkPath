@@ -1,0 +1,48 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://scenes/enemies/EnemyBase.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/enemies/NightmareFrames.tres" type="SpriteFrames" id=2]
+[ext_resource path="res://scenes/RoundLightMask.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/enemies/Nightmare.gd" type="Script" id=4]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 26.742
+
+[node name="Nightmare" instance=ExtResource( 1 )]
+script = ExtResource( 4 )
+
+[node name="AnimatedSprite" parent="." index="0"]
+frames = ExtResource( 2 )
+frame = 2
+
+[node name="CollisionShape2D" parent="." index="1"]
+shape = SubResource( 1 )
+
+[node name="MaskController" parent="." index="2"]
+MaskTexture = ExtResource( 3 )
+
+[node name="Timer" type="Timer" parent="." index="3"]
+process_mode = 0
+wait_time = 2.0
+
+[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="." index="4"]
+
+[node name="Right" type="RayCast2D" parent="." index="5"]
+enabled = true
+cast_to = Vector2( 20, 0 )
+
+[node name="Down" type="RayCast2D" parent="." index="6"]
+enabled = true
+cast_to = Vector2( 0, 20 )
+
+[node name="Left" type="RayCast2D" parent="." index="7"]
+enabled = true
+cast_to = Vector2( -20, 0 )
+
+[node name="Up" type="RayCast2D" parent="." index="8"]
+enabled = true
+cast_to = Vector2( 0, -20 )
+
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
+[connection signal="screen_entered" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_entered"]
+[connection signal="screen_exited" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited"]

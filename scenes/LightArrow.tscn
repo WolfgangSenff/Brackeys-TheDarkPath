@@ -1,0 +1,81 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://scenes/LightArrow.gd" type="Script" id=1]
+[ext_resource path="res://assets/projectiles/chalk_smoke.png" type="Texture" id=2]
+[ext_resource path="res://scenes/MaskController.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/FireArrowMask.tscn" type="PackedScene" id=4]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends RemoteTransform2D
+
+export (PackedScene) onready var MaskTexture
+export (bool) var ShouldRemoveParent
+export (bool) var ShouldDeleteMask = true
+export (bool) var ShouldHide
+
+var _placed_light_mask
+
+func _ready() -> void:
+    _placed_light_mask = MaskTexture.instance()
+    get_tree().call_group(\"FogSurface\", \"add_child\", _placed_light_mask)
+    yield(get_tree(), \"idle_frame\")
+    remote_path = _placed_light_mask.get_path()
+
+func _on_VisibilityNotifier2D_screen_exited() -> void:
+    if ShouldRemoveParent:
+        get_parent().queue_free()
+    elif ShouldHide:
+        get_parent().hide()
+
+    if ShouldDeleteMask:
+        if is_instance_valid(_placed_light_mask):
+            _placed_light_mask.queue_free()
+    else:
+        _placed_light_mask.hide()
+
+func _on_VisibilityNotifier2D_screen_entered() -> void:
+    if not ShouldRemoveParent and is_instance_valid(get_parent()):
+        get_parent().show()
+        if is_instance_valid(_placed_light_mask):
+            _placed_light_mask.show()
+"
+
+[node name="LightArrow" type="Area2D"]
+collision_layer = 8
+script = ExtResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+
+[node name="PlayerHit" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerHit"]
+
+[node name="EnemyHit" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyHit"]
+
+[node name="Sprite" type="Sprite" parent="."]
+
+[node name="Trail" type="CPUParticles2D" parent="."]
+amount = 60
+local_coords = false
+texture = ExtResource( 2 )
+emission_shape = 1
+emission_sphere_radius = 3.0
+flag_align_y = true
+direction = Vector2( 0, -1 )
+spread = 180.0
+gravity = Vector2( 0, -10 )
+radial_accel = 20.0
+radial_accel_random = 1.0
+scale_amount = 1.5
+scale_amount_random = 1.0
+
+[node name="MaskController" parent="." instance=ExtResource( 3 )]
+position = Vector2( -0.297302, 1.18921 )
+script = SubResource( 1 )
+MaskTexture = ExtResource( 4 )
